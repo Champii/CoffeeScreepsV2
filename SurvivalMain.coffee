@@ -1,29 +1,29 @@
+Village = require 'Village'
+
 class SurvivalMain
 
   constructor: ->
+    @EarlyInit()
     @GarbageCollector()
-    @InitDefcon()
-    @InitTarget()
-    @InitSpawners()
-    @InitCreeps()
+    @InitVillages()
+
+  EarlyInit: ->
+    if not Memory.villages?
+      Memory.villages = [
+        {
+          id: 1
+          spawn: Game.spawns.Spawn1
+          defenders: []
+          workers: []
+        }
+      ]
 
   GarbageCollector: ->
     for name, creep of Memory.creeps
       if not Game.creeps[name]?
         delete Memory.creeps[name]
 
-  InitDefcon: ->
-    #Determine what to do
-    @defcon = DEFCON3
-
-  InitTarget: ->
-    Transporter.RealocAll()
-    Defender.GetGlobalTarget()
-
-  InitSpawners: ->
-    @spawners = (new Spawner spawn, @lvl for spawn of Game.spawns)
-
-  InitCreeps: ->
-    @creeps = (Creep.Get creep, @lvl for creep of Game.creeps)
+  InitVillages: ->
+    @villages = (new Village(village) for village of Memory.villages)
 
 module.exports = SurvivalMain
